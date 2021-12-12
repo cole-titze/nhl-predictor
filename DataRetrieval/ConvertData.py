@@ -1,3 +1,5 @@
+import sys
+sys.path.append('./')
 import Team
 import csv
 
@@ -45,7 +47,8 @@ def combineRows(tRow, oRow, gRow):
     losses = int(gRow[10])
     otl = int(gRow[11])
 
-    finalRow = [name, wins, losses, otl, gamesPlayed, goals / gamesPlayed, assists / gamesPlayed, points / gamesPlayed,
+    finalRow = [name, wins / gamesPlayed, wins, losses, otl, gamesPlayed,
+                goals / gamesPlayed, assists / gamesPlayed, points / gamesPlayed,
                 pom, pm / gamesPlayed, ppg / gamesPlayed, ppa / gamesPlayed,
                 shg / gamesPlayed, sha / gamesPlayed, sog / gamesPlayed, sogp,
                 oGoals / gamesPlayed, oAssists / gamesPlayed, oPoints / gamesPlayed,
@@ -56,12 +59,12 @@ def combineRows(tRow, oRow, gRow):
     return finalRow
 
 
-finalFileName = "Final.csv"
-fields = ["Name", "Wins", "Losses", "OTL", "Games Played", "GPG",
-          "APG", "PPG", "P/M", "PMPG",
+finalFileName = "../TeamData/Final.csv"
+fields = ["Name", "WP", "Wins", "Losses", "OTL", "Games Played",
+          "GPG", "APG", "PPG", "P/M", "PMPG",
           "PPGPG", "PPAPG", "SHGPG", "SHAPG", "SOGPG",
           "SOGP", "GAPG", "AAPG", "PAPG", "Opp P/M",
-          "PMAPG", "PPGAPG", "PPAPG", "SHGAPG", "SHAAPG",
+          "PMAPG", "PPGAPG", "PPAAPG", "SHGAPG", "SHAAPG",
           "SOGAPG", "SOGAP"]
 
 # opening the file with w+ mode truncates the file
@@ -77,17 +80,16 @@ for team in teams:
     rows = []
     goalieRows = []
     teamAbbr, teamName = team.split("/")
-    print(teamAbbr)
 
     fileName = teamName + ".csv"
     goalieFileName = teamAbbr + ".csv"
-    path = "./TeamData/" + fileName
+    path = "../TeamData/" + fileName
 
     with open(path, "r") as csvfile:
         csvreader = csv.reader(csvfile)
         for row in csvreader:
             rows.append(row)
-    path = "./TeamData/" + goalieFileName
+    path = "../TeamData/" + goalieFileName
     with open(path, "r") as csvfile:
         csvreader = csv.reader(csvfile)
         for row in csvreader:
@@ -112,3 +114,5 @@ for team in teams:
     with open(finalFileName, 'a') as csvWriteFile:
         csvwriter = csv.writer(csvWriteFile)
         csvwriter.writerow(newRow)
+
+print("File Creation Completed")
