@@ -11,12 +11,12 @@ def trimStats(csvRow):
 
 def fixZeros(fixedRow):
     for i, value in enumerate(fixedRow):
-        if value == "\xc3\xa2\xe2\x82\xac\xe2\x80\x9d" or value == "":
+        if value == "â€”" or value == "":
             fixedRow[i] = 0
     return fixedRow
 
 
-def combineRows(tRow, oRow):
+def combineRows(tRow, oRow, gRow):
     gamesPlayed = int(tRow[2])
     name = str(tRow[0])
     goals = float(tRow[3])
@@ -41,19 +41,24 @@ def combineRows(tRow, oRow):
     oSog = float(oRow[12])
     sogp = float(tRow[13])
     oSogp = float(oRow[13])
+    wins = int(gRow[9])
+    losses = int(gRow[10])
+    otl = int(gRow[11])
 
-    finalRow = [name, gamesPlayed, goals / gamesPlayed, assists / gamesPlayed, points / gamesPlayed,
+    finalRow = [name, wins, losses, otl, gamesPlayed, goals / gamesPlayed, assists / gamesPlayed, points / gamesPlayed,
                 pom, pm / gamesPlayed, ppg / gamesPlayed, ppa / gamesPlayed,
                 shg / gamesPlayed, sha / gamesPlayed, sog / gamesPlayed, sogp,
                 oGoals / gamesPlayed, oAssists / gamesPlayed, oPoints / gamesPlayed,
                 oPom, oPm / gamesPlayed, oPpg / gamesPlayed, oPpa / gamesPlayed,
                 oShg / gamesPlayed, oSha / gamesPlayed, oSog / gamesPlayed,
                 oSogp]
+
     return finalRow
 
 
 finalFileName = "Final.csv"
-fields = ["Name", "Games Played", "GPG", "APG", "PPG", "P/M", "PMPG",
+fields = ["Name", "Wins", "Losses", "OTL", "Games Played", "GPG",
+          "APG", "PPG", "P/M", "PMPG",
           "PPGPG", "PPAPG", "SHGPG", "SHAPG", "SOGPG",
           "SOGP", "GAPG", "AAPG", "PAPG", "Opp P/M",
           "PMAPG", "PPGAPG", "PPAPG", "SHGAPG", "SHAAPG",
@@ -70,17 +75,25 @@ with open(finalFileName, 'w') as csvWriteFile:
 teams = Team.teams
 for team in teams:
     rows = []
+    goalieRows = []
     teamAbbr, teamName = team.split("/")
     print(teamAbbr)
 
     fileName = teamName + ".csv"
+    goalieFileName = teamAbbr + ".csv"
     path = "./TeamData/" + fileName
 
     with open(path, "r") as csvfile:
         csvreader = csv.reader(csvfile)
-
         for row in csvreader:
             rows.append(row)
+    path = "./TeamData/" + goalieFileName
+    with open(path, "r") as csvfile:
+        csvreader = csv.reader(csvfile)
+        for row in csvreader:
+            goalieRows.append(row)
+
+    winLossRow = goalieRows[-2]
     teamRow = rows[-2]
     opponentRow = rows[-1]
 
@@ -92,8 +105,9 @@ for team in teams:
 
     fixZeros(teamRow)
     fixZeros(opponentRow)
+    fixZeros(winLossRow)
 
-    newRow = combineRows(teamRow, opponentRow)
+    newRow = combineRows(teamRow, opponentRow, winLossRow)
 
     with open(finalFileName, 'a') as csvWriteFile:
         csvwriter = csv.writer(csvWriteFile)

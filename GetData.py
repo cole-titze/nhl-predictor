@@ -15,6 +15,11 @@ for team in Team.teams:
     dataframe = data[-2]
     fileName = "./TeamData/" + teamName + ".csv"
     dataframe.to_csv(fileName)
+
+    fileName = "./TeamData/" + teamAbbr + ".csv"
+    dataframe = data[-1]
+    dataframe.to_csv(fileName)
+
     time.sleep(.2)
 
 print("Collection Completed")
