@@ -16,15 +16,17 @@ def PredictedWinRate(teamData):
 
 def GetTeamData(teamName):
     teamData = TeamData()
-    fileName = teamName + ".csv"
-    path = "../TeamData/" + fileName
-    rows = []
+    fileName = "Final.csv"
+    path = "./TeamData/" + fileName
 
     with open(path, "r") as csvfile:
         csvreader = csv.reader(csvfile)
-    for row in csvreader:
-        if row[1] == teamName:
-            teamData.GPG = row[3]
+        for row in csvreader:
+            if row[0] == teamName:
+                teamData.GPG = float(row[6])
+                teamData.GAPG = float(row[17])
+                teamData.SOGPG = float(row[15])
+                teamData.SOGAPG = float(row[26])
 
     return teamData
 
@@ -35,3 +37,12 @@ def Main(teamName1, teamName2):
 
     team1WinAverage = PredictedWinRate(team1Data)
     team2WinAverage = PredictedWinRate(team2Data)
+
+    odds = min(team1WinAverage, team2WinAverage) / max(team1WinAverage, team2WinAverage)
+
+    percent = (1 - odds) * 100
+    print(str(percent) + " %")
+
+
+Main("pittsburgh-penguins", "carolina-hurricanes")
+Main("seattle-kraken", "toronto-maple-leafs")

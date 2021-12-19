@@ -13,7 +13,7 @@ def trimStats(csvRow):
 
 def fixZeros(fixedRow):
     for i, value in enumerate(fixedRow):
-        if value == "â€”" or value == "":
+        if value == "â€”" or value == "" or value == "—":
             fixedRow[i] = 0
     return fixedRow
 
