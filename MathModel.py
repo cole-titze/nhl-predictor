@@ -34,14 +34,20 @@ def GetTeamData(teamName):
 def Main(teamName1, teamName2):
     team1Data = GetTeamData(teamName1)
     team2Data = GetTeamData(teamName2)
+    favoredTeamName = ""
 
     team1WinAverage = PredictedWinRate(team1Data)
     team2WinAverage = PredictedWinRate(team2Data)
+    if team1WinAverage > team2WinAverage:
+        favoredTeamName = teamName1
+    else:
+        favoredTeamName = teamName2
 
     odds = min(team1WinAverage, team2WinAverage) / max(team1WinAverage, team2WinAverage)
 
     percent = (1 - odds) * 100
-    print(str(percent) + " %")
+    odds = percent + 50
+    print(str(round(odds, 2)) + "% " + favoredTeamName)
 
 
 Main("pittsburgh-penguins", "carolina-hurricanes")
