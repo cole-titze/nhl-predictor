@@ -21,6 +21,18 @@ def cleanPlayerData(nhl_skaters):
     # Reorder and rename columns
     nhl_skaters = nhl_skaters.loc[:, ['playername', 'team', 'season', 'league', 'position', 'gp', 'g', 'a', 'tp', 'ppg', 'pim', '+/-', 'link']]
     nhl_skaters = nhl_skaters.rename(columns={'playername': 'player'})
+    nhl_skaters = nhl_skaters.rename(columns={'+/-': 'pm'})
 
     nhl_skaters.ppg = np.where(nhl_skaters.ppg == "-", 0, nhl_skaters.ppg)
+    return nhl_skaters
+
+
+def convertColumnTypes(nhl_skaters):
+    nhl_skaters.ppg = nhl_skaters.ppg.astype(float)
+    nhl_skaters.gp = nhl_skaters.gp.astype(float)
+    nhl_skaters.g = nhl_skaters.g.astype(float)
+    nhl_skaters.a = nhl_skaters.a.astype(float)
+    nhl_skaters.pim = nhl_skaters.pim.astype(float)
+    nhl_skaters.pm = nhl_skaters.pm.astype(float)
+
     return nhl_skaters
