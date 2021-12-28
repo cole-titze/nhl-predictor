@@ -4,7 +4,6 @@ import numpy as np
 
 
 def getPlayerData():
-    nhl_skaters = pd.DataFrame
     league = "nhl"
     nhl_2012 = ep.getPlayers(league, '2012-13')
     nhl_2013 = ep.getPlayers(league, '2013-14')
@@ -32,7 +31,7 @@ def cleanPlayerData(nhl_skaters):
     nhl_skaters = nhl_skaters.rename(columns={'+/-': 'pm'})
 
     nhl_skaters.ppg = np.where(nhl_skaters.ppg == "-", 0, nhl_skaters.ppg)
-    nhl_skaters.ppg = np.where(nhl_skaters.pm == "", 0, nhl_skaters.pm)
+    nhl_skaters.pm = np.where(nhl_skaters.pm == "", 0, nhl_skaters.pm)
 
     return nhl_skaters
 
