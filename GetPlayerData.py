@@ -1,13 +1,21 @@
-import TopDownHockey_Scraper.TopDownHockey_EliteProspects_Scraper as hockeyScraper
+import pandas as pd
+from eliteprospect import eliteprospect_scraper as ep
 import numpy as np
-# import hockey_scraper
 
 
 def getPlayerData():
-    leagues = ["nhl"]
-    seasons = ["2018-2019"]
+    nhl_skaters = pd.DataFrame
+    league = "nhl"
+    nhl_2012 = ep.getPlayers(league, '2012-13')
+    nhl_2013 = ep.getPlayers(league, '2013-14')
+    nhl_2014 = ep.getPlayers(league, '2014-15')
+    nhl_2015 = ep.getPlayers(league, '2015-16')
+    nhl_2016 = ep.getPlayers(league, '2016-17')
+    nhl_2017 = ep.getPlayers(league, '2017-18')
+    nhl_2018 = ep.getPlayers(league, '2018-19')
 
-    nhl_skaters = hockeyScraper.get_skaters(leagues, seasons)
+    nhl_skaters = pd.concat([nhl_2012, nhl_2013, nhl_2014, nhl_2015, nhl_2016, nhl_2017, nhl_2018])
+
     return nhl_skaters
 
 
@@ -24,6 +32,8 @@ def cleanPlayerData(nhl_skaters):
     nhl_skaters = nhl_skaters.rename(columns={'+/-': 'pm'})
 
     nhl_skaters.ppg = np.where(nhl_skaters.ppg == "-", 0, nhl_skaters.ppg)
+    nhl_skaters.ppg = np.where(nhl_skaters.pm == "", 0, nhl_skaters.pm)
+
     return nhl_skaters
 
 
