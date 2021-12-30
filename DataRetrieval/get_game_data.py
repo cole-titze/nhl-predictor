@@ -1,8 +1,9 @@
 import requests
 import csv
+# TODO: Have each year be written to the csv after it is received instead of keeping all data and saving at the end (this will help with memory hogging)
 
 
-def is_invalid_game(game):
+def is_invalid_game(game: dict) -> bool:
     # Check for game not returned by api
     if 'message' in game:
         return True
@@ -13,14 +14,27 @@ def is_invalid_game(game):
     return False
 
 
+def get_winner(h_goals: int, a_goals: int) -> str:
+    if h_goals > a_goals:
+        return "Home"
+    elif h_goals == a_goals:
+        return "Draw"
+    return "Away"
+
+
 def build_row(game: dict) -> list:
     date = game['gameData']['datetime']['dateTime'].split('T')[0]
+    home_goals = int(game['liveData']['boxscore']['teams']['home']['teamStats']['teamSkaterStats']['goals'])
+    away_goals = int(game['liveData']['boxscore']['teams']['away']['teamStats']['teamSkaterStats']['goals'])
+    winner = get_winner(home_goals, away_goals)
 
     clean_row = [game['gameData']['teams']['home']['name'],
                  game['gameData']['teams']['away']['name'],
+                 game['gameData']['game']['season'],
                  date,
-                 game['liveData']['boxscore']['teams']['home']['teamStats']['teamSkaterStats']['goals'],
-                 game['liveData']['boxscore']['teams']['away']['teamStats']['teamSkaterStats']['goals'],
+                 home_goals,
+                 away_goals,
+                 winner,
                  game['liveData']['boxscore']['teams']['home']['teamStats']['teamSkaterStats']['shots'],
                  game['liveData']['boxscore']['teams']['away']['teamStats']['teamSkaterStats']['shots'],
                  game['liveData']['boxscore']['teams']['home']['teamStats']['teamSkaterStats']['powerPlayGoals'],
@@ -84,7 +98,7 @@ def to_csv(game_rows: list) -> None:
 
         # Counter variable used for writing
         # headers to the CSV file
-        header = ['id', 'home_team', 'away_team', 'date', 'home_g', 'away_g', 'home_sog', 'away_sog', 'home_ppg', 'away_ppg',
+        header = ['id', 'home_team', 'away_team', 'season', 'date', 'home_g', 'away_g', 'winner', 'home_sog', 'away_sog', 'home_ppg', 'away_ppg',
                   'home_pim', 'away_pim', 'home_face_off_win_percent', 'away_face_off_win_percent', 'home_blocked_shots',
                   'away_blocked_shots', 'home_hits', 'away_hits', 'home_takeaways', 'away_takeaways', 'home_giveaways',
                   'away_giveaways']
