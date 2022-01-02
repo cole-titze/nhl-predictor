@@ -87,10 +87,8 @@ def get_games():
     return games
 
 
-def to_csv(game_rows: list) -> None:
-    file_path = '../Data/Matches.csv'
-
-    # now we will open a file for writing
+def to_csv(game_rows: list, file_path: str) -> None:
+    # open file for writing
     with open(file_path, 'w') as data_file:
 
         # create the csv writer object
