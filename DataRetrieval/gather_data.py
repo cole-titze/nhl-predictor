@@ -1,5 +1,6 @@
 import get_player_data
 import get_game_data
+import get_pregame_data
 from eliteprospect import eliteprospect_scraper as ep
 import os.path
 
@@ -33,8 +34,14 @@ def gather_data() -> None:
     if not os.path.exists('../Data/Matches.csv'):
         # Get Game Data
         game_data = get_game_data.get_games()
-        get_game_data.to_csv(game_data)
+        get_game_data.to_csv(game_data, '../Data/Matches.csv')
         print("Game Data Saved")
+
+    if not os.path.exists('../Data/PregameStats.csv'):
+        # Gather Pregame Statistics
+        pregame_data = get_pregame_data.get_pregame_statistics()
+        get_pregame_data.to_csv(pregame_data, '../Data/PregameStats.csv')
+        print("Pregame Data Saved")
 
 
 gather_data()
