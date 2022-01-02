@@ -32,6 +32,31 @@ def game_win(game: list, team_name: str):
     return False
 
 
+def game_draw(game: list):
+    if game[7] == "Draw":
+        return True
+    return False
+
+
+def get_draw_ratio(game_id: int, season_data: list, team_name: str):
+    draw_ratio = 0
+    valid_games = get_played_games(game_id, season_data)
+    team_games = get_games_by_team(valid_games, team_name)
+
+    # Reverse to walk through previous games
+    team_games.reverse()
+    count = 0
+    for row in team_games:
+        if count == 5:
+            break
+        if game_draw(row):
+            draw_ratio = draw_ratio + 1
+        count = count + 1
+    if count > 0:
+        draw_ratio = float(draw_ratio) / float(count)
+    return draw_ratio
+
+
 def get_win_ratio(game_id: int, season_data: list, team_name: str):
     win_ratio = 0
     valid_games = get_played_games(game_id, season_data)
@@ -74,7 +99,7 @@ def get_pregame_statistics():
                     game_id,
                     home_team,
                     get_win_ratio(game_id, season_data, home_team),
-                    # get_draw_ratio(),
+                    get_draw_ratio(game_id, season_data, home_team),
                     # get_loss_ratio(),
                     # get_head_to_head_ratio(),
                     # get_current_goals_per_game(),
@@ -84,7 +109,7 @@ def get_pregame_statistics():
                     game_id,
                     away_team,
                     get_win_ratio(game_id, season_data, away_team),
-                    # get_draw_ratio(),
+                    get_draw_ratio(game_id, season_data, away_team),
                     # get_loss_ratio(),
                     # get_head_to_head_ratio(),
                     # get_current_goals_per_game(),
