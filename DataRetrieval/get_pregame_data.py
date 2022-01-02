@@ -103,6 +103,42 @@ def get_win_ratio(game_id: int, season_data: list, team_name: str) -> float:
     return win_ratio
 
 
+def get_goal_average_scoped(game_id, season_data, team_name):
+    goal_ratio = 0
+    valid_games = get_played_games(game_id, season_data)
+    team_games = get_games_by_team(valid_games, team_name)
+
+    # Reverse to walk through previous games
+    team_games.reverse()
+    count = 0
+    for row in team_games:
+        if count == 5:
+            break
+        goal_ratio += get_goals(row, team_name)
+        count = count + 1
+    if count > 0:
+        goal_ratio = float(goal_ratio) / float(count)
+    return goal_ratio
+
+
+def get_conceded_goal_average_scoped(game_id, season_data, team_name):
+    goal_ratio = 0
+    valid_games = get_played_games(game_id, season_data)
+    team_games = get_games_by_team(valid_games, team_name)
+
+    # Reverse to walk through previous games
+    team_games.reverse()
+    count = 0
+    for row in team_games:
+        if count == 5:
+            break
+        goal_ratio += get_conceded_goals(row, team_name)
+        count = count + 1
+    if count > 0:
+        goal_ratio = float(goal_ratio) / float(count)
+    return goal_ratio
+
+
 def get_single_season(historic_data: list, season: str) -> list:
     season_data = []
     for row in historic_data:
@@ -141,12 +177,46 @@ def get_away_goals(game: list, team_name: str) -> int:
     return 0
 
 
+def get_home_conceded_goals(game: list, team_name: str) -> int:
+    if game[1] == team_name:
+        return int(game[6])
+    return 0
+
+
+def get_away_conceded_goals(game: list, team_name: str) -> int:
+    if game[2] == team_name:
+        return int(game[5])
+    return 0
+
+
 def get_goals(game: list, team_name: str) -> int:
     goals = 0
     goals += get_away_goals(game, team_name)
     goals += get_home_goals(game, team_name)
 
     return goals
+
+
+def get_conceded_goals(game: list, team_name: str) -> int:
+    goals = 0
+    goals += get_away_conceded_goals(game, team_name)
+    goals += get_home_conceded_goals(game, team_name)
+
+    return goals
+
+
+def get_current_conceded_goals_per_game(game_id: int, season_data: list, team_name: str) -> float:
+    valid_games = get_played_games(game_id, season_data)
+    team_games = get_games_by_team(valid_games, team_name)
+
+    goals_avg = 0
+    count = 0
+    for game in team_games:
+        goals_avg = goals_avg + get_conceded_goals(game, team_name)
+        count = count + 1
+    if count > 0:
+        goals_avg = goals_avg / count
+    return goals_avg
 
 
 def get_current_goals_per_game(game_id: int, season_data: list, team_name: str) -> float:
@@ -174,7 +244,7 @@ def get_home_games(team_games: list, team_name: str) -> list:
 def get_away_games(team_games: list, team_name: str) -> list:
     away_games = []
     for game in team_games:
-        if game[1] == team_name:
+        if game[2] == team_name:
             away_games.append(game)
     return away_games
 
@@ -197,16 +267,46 @@ def get_current_goals_per_game_home(game_id: int, season_data: list, team_name: 
 def get_current_goals_per_game_away(game_id: int, season_data: list, team_name: str) -> float:
     valid_games = get_played_games(game_id, season_data)
     team_games = get_games_by_team(valid_games, team_name)
+    away_games = get_away_games(team_games, team_name)
 
     goals_avg = 0
     count = 0
-    for game in team_games:
+    for game in away_games:
         goals_avg += get_away_goals(game, team_name)
         count = count + 1
     if count > 0:
         goals_avg = goals_avg / count
     return goals_avg
 
+
+def get_current_conceded_goals_per_game_home(game_id: int, season_data: list, team_name: str) -> float:
+    valid_games = get_played_games(game_id, season_data)
+    team_games = get_games_by_team(valid_games, team_name)
+    home_games = get_home_games(team_games, team_name)
+
+    goals_avg = 0
+    count = 0
+    for game in home_games:
+        goals_avg += get_home_conceded_goals(game, team_name)
+        count = count + 1
+    if count > 0:
+        goals_avg = goals_avg / count
+    return goals_avg
+
+
+def get_current_conceded_goals_per_game_away(game_id: int, season_data: list, team_name: str) -> float:
+    valid_games = get_played_games(game_id, season_data)
+    team_games = get_games_by_team(valid_games, team_name)
+    away_games = get_away_games(team_games, team_name)
+
+    goals_avg = 0
+    count = 0
+    for game in away_games:
+        goals_avg += get_away_conceded_goals(game, team_name)
+        count = count + 1
+    if count > 0:
+        goals_avg = goals_avg / count
+    return goals_avg
 
 
 def get_pregame_statistics():
@@ -228,7 +328,11 @@ def get_pregame_statistics():
                     get_loss_ratio(game_id, season_data, home_team),
                     get_head_to_head_ratio(game_id, season_data, home_team, away_team),
                     get_current_goals_per_game(game_id, season_data, home_team),
-                    get_current_goals_per_game_home(game_id, season_data, home_team)
+                    get_current_goals_per_game_home(game_id, season_data, home_team),
+                    get_current_conceded_goals_per_game(game_id, season_data, home_team),
+                    get_current_conceded_goals_per_game_home(game_id, season_data, home_team),
+                    get_goal_average_scoped(game_id, season_data, home_team),
+                    get_conceded_goal_average_scoped(game_id, season_data, home_team)
                 ]
                 pregame_row_away = [
                     game_id,
@@ -238,7 +342,11 @@ def get_pregame_statistics():
                     get_loss_ratio(game_id, season_data, away_team),
                     get_head_to_head_ratio(game_id, season_data, away_team, home_team),
                     get_current_goals_per_game(game_id, season_data, away_team),
-                    get_current_goals_per_game_away(game_id, season_data, home_team)
+                    get_current_goals_per_game_away(game_id, season_data, away_team),
+                    get_current_conceded_goals_per_game(game_id, season_data, away_team),
+                    get_current_conceded_goals_per_game_away(game_id, season_data, away_team),
+                    get_goal_average_scoped(game_id, season_data, away_team),
+                    get_conceded_goal_average_scoped(game_id, season_data, away_team)
                 ]
                 pregame_data.append(pregame_row_home)
                 pregame_data.append(pregame_row_away)
@@ -256,7 +364,7 @@ def to_csv(game_rows: list, file_path: str) -> None:
         # Counter variable used for writing
         # headers to the CSV file
         header = ['id', 'team_name', 'win_ratio_5', 'draw_ratio_5', 'loss_ratio_5', 'h2h_w_d_l_ratio', 'current_goals_avg',
-                  'current_goals_avg_h_a']
+                  'current_goals_avg_h_a', 'conceded_goals_avg', 'conceded_goals_avg_h_a', 'goal_average_5', 'conceded_average_5']
         csv_writer.writerow(header)
 
         csv_writer.writerows(game_rows)
