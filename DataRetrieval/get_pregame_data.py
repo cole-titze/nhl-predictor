@@ -309,10 +309,10 @@ def get_current_conceded_goals_per_game_away(game_id: int, season_data: list, te
     return goals_avg
 
 
-def get_pregame_statistics():
-    years = ['20122013', '20132014', '20142015', '20152016', '20162017', '20172018', '20182019', '20192020']
+def get_pregame_statistics(file_path: str):
+    years = ['20122013', '20132014', '20142015', '20152016', '20162017', '20172018', '20182019', '20192020', '20202021']
     pregame_data = []
-    with open('../Data/Matches.csv', 'r') as read_obj:
+    with open(file_path, 'r') as read_obj:
         csv_reader = list(csv.reader(read_obj))
         for season in years:
             season_data = get_single_season(csv_reader, season)
