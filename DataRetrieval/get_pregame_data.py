@@ -332,7 +332,8 @@ def get_pregame_statistics(file_path: str):
                     get_current_conceded_goals_per_game(game_id, season_data, home_team),
                     get_current_conceded_goals_per_game_home(game_id, season_data, home_team),
                     get_goal_average_scoped(game_id, season_data, home_team),
-                    get_conceded_goal_average_scoped(game_id, season_data, home_team)
+                    get_conceded_goal_average_scoped(game_id, season_data, home_team),
+                    row[7]
                 ]
                 pregame_row_away = [
                     game_id,
@@ -346,7 +347,8 @@ def get_pregame_statistics(file_path: str):
                     get_current_conceded_goals_per_game(game_id, season_data, away_team),
                     get_current_conceded_goals_per_game_away(game_id, season_data, away_team),
                     get_goal_average_scoped(game_id, season_data, away_team),
-                    get_conceded_goal_average_scoped(game_id, season_data, away_team)
+                    get_conceded_goal_average_scoped(game_id, season_data, away_team),
+                    row[7]
                 ]
                 pregame_data.append(pregame_row_home)
                 pregame_data.append(pregame_row_away)
@@ -364,7 +366,8 @@ def to_csv(game_rows: list, file_path: str) -> None:
         # Counter variable used for writing
         # headers to the CSV file
         header = ['id', 'team_name', 'win_ratio_5', 'draw_ratio_5', 'loss_ratio_5', 'h2h_w_d_l_ratio', 'current_goals_avg',
-                  'current_goals_avg_h_a', 'conceded_goals_avg', 'conceded_goals_avg_h_a', 'goal_average_5', 'conceded_average_5']
+                  'current_goals_avg_h_a', 'conceded_goals_avg', 'conceded_goals_avg_h_a', 'goal_average_5',
+                  'conceded_average_5', 'result']
         csv_writer.writerow(header)
 
         csv_writer.writerows(game_rows)
