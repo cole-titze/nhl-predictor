@@ -31,17 +31,29 @@ def gather_data() -> None:
         teamData.to_csv('../Data/Team.csv')
         print("Team Data Saved")
 
-    if not os.path.exists('../Data/Matches.csv'):
-        # Get Game Data
-        game_data = get_game_data.get_games()
+    if not os.path.exists('../Data/Matches.csv') or not os.path.exists('../Data/TestingMatches.csv'):
+        # Get Training Game Data
+        years = ['2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019']
+        game_data = get_game_data.get_games(years)
         get_game_data.to_csv(game_data, '../Data/Matches.csv')
-        print("Game Data Saved")
+        print("Training Game Data Saved")
 
-    if not os.path.exists('../Data/PregameStats.csv'):
-        # Gather Pregame Statistics
-        pregame_data = get_pregame_data.get_pregame_statistics()
+        # Get Test Data
+        years = ['2020']
+        game_data = get_game_data.get_games(years)
+        get_game_data.to_csv(game_data, '../Data/TestingMatches.csv')
+        print("Testing Game Data Saved")
+
+    if not os.path.exists('../Data/PregameStats.csv') or not os.path.exists('../Data/TestingPregameStats.csv'):
+        # Gather Training Pregame Statistics
+        pregame_data = get_pregame_data.get_pregame_statistics('../Data/Matches.csv')
         get_pregame_data.to_csv(pregame_data, '../Data/PregameStats.csv')
-        print("Pregame Data Saved")
+        print("Training Pregame Data Saved")
+
+        # Gather Testing Pregame Statistics
+        testing_data = get_pregame_data.get_pregame_statistics('../Data/TestingMatches.csv')
+        get_pregame_data.to_csv(testing_data, '../Data/TestingPregameStats.csv')
+        print("Testing Pregame Data Saved")
 
 
 gather_data()

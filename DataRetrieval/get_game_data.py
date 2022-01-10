@@ -55,11 +55,10 @@ def build_row(game: dict) -> list:
     return clean_row
 
 
-def get_games():
+def get_games(years: list):
     # Set up the API call variables
     games = []
     game_data = []
-    years = ['2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019']
     season_type = '02'
     max_game_ID = 1400
 
