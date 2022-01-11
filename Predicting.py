@@ -43,11 +43,8 @@ def get_info(games: list) -> list:
 def train_model():
     training_games = get_games("Data/PregameStats.csv")
     x_training = get_independent(training_games)
-    x_training.extend(x_training)
     y_training = get_dependent(training_games)
-    y_training.extend(y_training)
     info_training = get_info(training_games)
-    info_training.extend(info_training)
 
     # Split into training and testing data
     x_train, x_test, y_train, y_test, info_train, info_test = train_test_split(x_training, y_training, info_training,
