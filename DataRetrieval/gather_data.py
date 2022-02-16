@@ -62,7 +62,7 @@ def get_pregame_stats():
 
 
 def gather_data() -> None:
-    #get_nhl_data()
+    # get_nhl_data()
     get_match_history()
     get_pregame_stats()
 
