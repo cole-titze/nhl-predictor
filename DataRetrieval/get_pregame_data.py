@@ -317,6 +317,13 @@ def get_current_conceded_goals_per_game_away(game_id: int, season_data: list, te
     return goals_avg
 
 
+def remove_draws(pregame_data):
+    for game in pregame_data:
+        if game[12] == "Draw":
+            game[13] = True
+    return pregame_data
+
+
 def get_pregame_statistics(file_path: str):
     years = ['20122013', '20132014', '20142015', '20152016', '20162017', '20172018', '20182019', '20192020', '20202021']
     pregame_data = []
@@ -363,6 +370,7 @@ def get_pregame_statistics(file_path: str):
                 pregame_data.append(pregame_row_home)
                 pregame_data.append(pregame_row_away)
     pregame_data = sort(pregame_data)
+    pregame_data = remove_draws(pregame_data)
     return pregame_data
 
 
@@ -375,6 +383,7 @@ def to_csv(game_rows: list, file_path: str) -> None:
 
         # Counter variable used for writing
         # headers to the CSV file
+        # TODO: Make home and away separate
         header = ['id', 'team_name', 'win_ratio_5', 'draw_ratio_5', 'loss_ratio_5', 'h2h_w_d_l_ratio', 'current_goals_avg',
                   'current_goals_avg_h_a', 'conceded_goals_avg', 'conceded_goals_avg_h_a', 'goal_average_5',
                   'conceded_average_5', 'result', 'excluded']
