@@ -4,7 +4,7 @@ import csv
 
 
 def sort(pregame_data: list) -> list:
-    pregame_data.sort(key=lambda x: x[1])
+    pregame_data.sort(key=lambda x: x[0])
     return pregame_data
 
 
@@ -317,8 +317,16 @@ def get_current_conceded_goals_per_game_away(game_id: int, season_data: list, te
     return goals_avg
 
 
+def remove_draws(pregame_data):
+    for game in pregame_data:
+        if game[18] == "Draw":
+            game[19] = True
+    return pregame_data
+
+
 def get_pregame_statistics(file_path: str):
-    years = ['20122013', '20132014', '20142015', '20152016', '20162017', '20172018', '20182019', '20192020', '20202021']
+    years = ['20122013', '20132014', '20142015', '20152016', '20162017', '20172018', '20182019', '20192020', '20202021',
+             '20212022']
     pregame_data = []
     with open(file_path, 'r') as read_obj:
         csv_reader = list(csv.reader(read_obj))
@@ -328,41 +336,31 @@ def get_pregame_statistics(file_path: str):
                 home_team = row[1]
                 away_team = row[2]
                 game_id = int(row[0])
-                pregame_row_home = [
+                pregame_row = [
                     game_id,
                     home_team,
+                    away_team,
                     get_win_ratio(game_id, season_data, home_team),
-                    get_draw_ratio(game_id, season_data, home_team),
-                    get_loss_ratio(game_id, season_data, home_team),
-                    get_head_to_head_ratio(game_id, season_data, home_team, away_team),
                     get_current_goals_per_game(game_id, season_data, home_team),
                     get_current_goals_per_game_home(game_id, season_data, home_team),
                     get_current_conceded_goals_per_game(game_id, season_data, home_team),
                     get_current_conceded_goals_per_game_home(game_id, season_data, home_team),
                     get_goal_average_scoped(game_id, season_data, home_team),
                     get_conceded_goal_average_scoped(game_id, season_data, home_team),
-                    row[7],
-                    is_excluded(game_id, season_data, home_team)
-                ]
-                pregame_row_away = [
-                    game_id,
-                    away_team,
                     get_win_ratio(game_id, season_data, away_team),
-                    get_draw_ratio(game_id, season_data, away_team),
-                    get_loss_ratio(game_id, season_data, away_team),
-                    get_head_to_head_ratio(game_id, season_data, away_team, home_team),
                     get_current_goals_per_game(game_id, season_data, away_team),
                     get_current_goals_per_game_away(game_id, season_data, away_team),
                     get_current_conceded_goals_per_game(game_id, season_data, away_team),
                     get_current_conceded_goals_per_game_away(game_id, season_data, away_team),
                     get_goal_average_scoped(game_id, season_data, away_team),
                     get_conceded_goal_average_scoped(game_id, season_data, away_team),
+                    get_head_to_head_ratio(game_id, season_data, away_team, home_team),
                     row[7],
-                    is_excluded(game_id, season_data, away_team)
+                    is_excluded(game_id, season_data, home_team) or is_excluded(game_id, season_data, away_team)
                 ]
-                pregame_data.append(pregame_row_home)
-                pregame_data.append(pregame_row_away)
+                pregame_data.append(pregame_row)
     pregame_data = sort(pregame_data)
+    pregame_data = remove_draws(pregame_data)
     return pregame_data
 
 
@@ -375,9 +373,12 @@ def to_csv(game_rows: list, file_path: str) -> None:
 
         # Counter variable used for writing
         # headers to the CSV file
-        header = ['id', 'team_name', 'win_ratio_5', 'draw_ratio_5', 'loss_ratio_5', 'h2h_w_d_l_ratio', 'current_goals_avg',
-                  'current_goals_avg_h_a', 'conceded_goals_avg', 'conceded_goals_avg_h_a', 'goal_average_5',
-                  'conceded_average_5', 'result', 'excluded']
+        # TODO: Make home and away separate
+        header = ['id', 'home_team_name', 'away_team_name', 'home_win_ratio_5', 'home_current_goals_avg',
+                  'home_current_goals_avg_h', 'home_conceded_goals_avg', 'home_conceded_goals_avg_h',
+                  'home_goal_average_5', 'home_conceded_average_5', 'away_win_ratio_5', 'away_current_goals_avg',
+                  'away_current_goals_avg_a', 'away_conceded_goals_avg', 'away_conceded_goals_avg_a',
+                  'away_goal_average_5', 'away_conceded_average_5', 'h2h_w_d_l_ratio', 'result', 'excluded']
         csv_writer.writerow(header)
 
         csv_writer.writerows(game_rows)
