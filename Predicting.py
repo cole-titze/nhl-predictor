@@ -4,7 +4,9 @@ import Models.models as models
 import DataRetrieval.get_prediction_data as data
 import Plotting.plotting as plt
 from sklearn.metrics import log_loss
+import DataRetrieval.teams as team
 
+teams = team.Teams
 x_training_headers = ['home_win_ratio_5', 'home_current_goals_avg', 'home_current_goals_avg',
                       'home_current_goals_avg_h', 'home_conceded_goals_avg', 'home_conceded_goals_avg_h',
                       'home_goal_average_5', 'home_conceded_average_5', 'h2h_w_d_l_ratio', 'away_win_ratio_5',
@@ -49,6 +51,7 @@ def get_models(x_train, y_train, x_test_season, y_test_season):
 
 # Look into cleaning data and what is best for each predictor
 # Combine predictions (sensor fusion)
+# Train with 2021 year and 2022 partial matches, try less years
 # Best is 60% with kmeans
 def run_models(away_team: str, home_team: str):
     x_train, y_train, x_test_season, y_test_season = data.split_data()
@@ -58,7 +61,7 @@ def run_models(away_team: str, home_team: str):
     # Predict Current Season Games
     x_current_game = data.get_single_game(home_team, away_team)
     x_current_game = [x_current_game]
-    print("Away   Home Percentage Chance")
+    print(away_team + "     " + home_team + " Percentage Chance")
     print(neural_net_classifier.predict_proba(x_current_game))
 
-run_models("Seattle Kraken", "Calgary Flames")
+run_models(teams.Kraken, teams.Flames)
