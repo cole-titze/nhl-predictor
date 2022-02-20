@@ -1,5 +1,6 @@
-import csv
 from sklearn.preprocessing import StandardScaler
+import DataRetrieval.get_pregame_data as pg
+import csv
 
 def get_games(file_path: str) -> list:
     games = []
@@ -59,3 +60,28 @@ def clean_x(x):
         cleaned_x.append(row)
 
     return cleaned_x
+
+def get_single_game(home_team, away_team):
+    with open('./Data/CurrentMatches.csv', 'r') as read_obj:
+        csv_reader = list(csv.reader(read_obj))
+    season = '20212022'
+    season_data = pg.get_single_season(csv_reader, season)
+    game_id = int(1000)
+    pregame_row = [
+        pg.get_win_ratio(game_id, season_data, home_team),
+        pg.get_current_goals_per_game(game_id, season_data, home_team),
+        pg.get_current_goals_per_game_home(game_id, season_data, home_team),
+        pg.get_current_conceded_goals_per_game(game_id, season_data, home_team),
+        pg.get_current_conceded_goals_per_game_home(game_id, season_data, home_team),
+        pg.get_goal_average_scoped(game_id, season_data, home_team),
+        pg.get_conceded_goal_average_scoped(game_id, season_data, home_team),
+        pg.get_win_ratio(game_id, season_data, away_team),
+        pg.get_current_goals_per_game(game_id, season_data, away_team),
+        pg.get_current_goals_per_game_away(game_id, season_data, away_team),
+        pg.get_current_conceded_goals_per_game(game_id, season_data, away_team),
+        pg.get_current_conceded_goals_per_game_away(game_id, season_data, away_team),
+        pg.get_goal_average_scoped(game_id, season_data, away_team),
+        pg.get_conceded_goal_average_scoped(game_id, season_data, away_team),
+        pg.get_head_to_head_ratio(game_id, season_data, away_team, home_team)
+    ]
+    return pregame_row
