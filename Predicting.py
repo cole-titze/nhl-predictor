@@ -16,12 +16,7 @@ def predict_results(classifier, x, y):
     y_prediction = classifier.predict(x)
     print(accuracy_score(y, y_prediction))
 
-# Look into cleaning data and what is best for each predictor
-# Combine predictions (sensor fusion)
-# Best is 60% with kmeans
-def run_models(away_team: str, home_team: str):
-    x_train, y_train, x_test_season, y_test_season = data.split_data()
-
+def get_models(x_train, y_train, x_test_season, y_test_season):
     # Make predictions on original Dimensionality
     print("Forrest Prediction: ")
     forrest_classifier = models.train_forrest_classifier(x_train, y_train)
@@ -29,6 +24,9 @@ def run_models(away_team: str, home_team: str):
     print("Neural Network Prediction: ")
     neural_net_classifier = models.train_neural_net(x_train, y_train)
     predict_results(neural_net_classifier, x_test_season, y_test_season)
+    x_test_season_prob = neural_net_classifier.predict_proba(x_test_season)
+    lg_log_loss = log_loss(y_test_season, x_test_season_prob)
+    print("Neural Network Log Loss: " + str(lg_log_loss))
 
     # Reduce Dimensionality
     pca = PCA(n_components=2)
@@ -36,22 +34,31 @@ def run_models(away_team: str, home_team: str):
     x_test_season_reduced = pca.fit_transform(x_test_season)
 
     # Plot lower dimensionality
-    plt.plot_reduced_dimensionality(x_test_season_reduced, y_test_season)
+    # plt.plot_reduced_dimensionality(x_test_season_reduced, y_test_season)
 
     # Predict Reduced Dimensionality
     print("PCA K-Means Prediction: ")
     kmeans = models.train_kmeans(x_train_reduced, y_train)
     predict_results(kmeans, x_test_season_reduced, y_test_season)
-    x_test_season_prob = neural_net_classifier.predict_proba(x_test_season)
-    lg_log_loss = log_loss(y_test_season, x_test_season_prob)
-    print("Log Loss: " + str(lg_log_loss))
+
     print("PCA Neural Network Prediction: ")
     net = models.train_neural_net(x_train_reduced, y_train)
     predict_results(net, x_test_season_reduced, y_test_season)
 
+    return forrest_classifier, neural_net_classifier, kmeans, net
+
+# Look into cleaning data and what is best for each predictor
+# Combine predictions (sensor fusion)
+# Best is 60% with kmeans
+def run_models(away_team: str, home_team: str):
+    x_train, y_train, x_test_season, y_test_season = data.split_data()
+
+    forrest_classifier, neural_net_classifier, kmeans, net = get_models(x_train, y_train, x_test_season, y_test_season)
+
     # Predict Current Season Games
     x_current_game = data.get_single_game(home_team, away_team)
     x_current_game = [x_current_game]
+    print("Away   Home Percentage Chance")
     print(neural_net_classifier.predict_proba(x_current_game))
 
 run_models("Seattle Kraken", "Calgary Flames")
