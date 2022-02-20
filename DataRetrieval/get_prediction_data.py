@@ -38,16 +38,16 @@ def split_data():
     y_training = get_dependent(training_games)
     # info_training = get_info(training_games)
 
-    # Current Season data
+    # Test Season data
     test_games = get_games("Data/TestingPregameStats.csv")
-    x_curr_season = get_independent(test_games)
-    y_curr_season = get_dependent(test_games)
+    x_test_season = get_independent(test_games)
+    y_test_season = get_dependent(test_games)
 
     # Standardize all data
     x_training = StandardScaler().fit_transform(x_training)
-    x_curr_season = StandardScaler().fit_transform(x_curr_season)
+    x_test_season = StandardScaler().fit_transform(x_test_season)
 
-    return x_training, y_training, x_curr_season, y_curr_season
+    return x_training, y_training, x_test_season, y_test_season
 
 def clean_x(x):
     cleaned_x = []

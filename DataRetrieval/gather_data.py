@@ -15,7 +15,7 @@ def check_files() -> bool:
 
 
 def get_nhl_data():
-    if os.path.exists('../Data/CleanedPlayers.csv'):
+    if check_files():
         # Get skater data
         nhl_skaters = get_player_data.get_player_data(train_years)
         player_data = nhl_skaters
@@ -76,8 +76,11 @@ def get_pregame_stats():
 
 
 def gather_data() -> None:
+    # Data Not Currently Used
     get_nhl_data()
+    # Grabs stats from nhl api
     get_match_history()
+    # Stores stats for each match for analysis
     get_pregame_stats()
 
 
