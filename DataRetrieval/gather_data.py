@@ -6,6 +6,7 @@ import os.path
 
 train_years = ['2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019']
 test_years = ['2020']
+current_years = ['2021']
 
 
 def check_files() -> bool:
@@ -14,7 +15,7 @@ def check_files() -> bool:
 
 
 def get_nhl_data():
-    if check_files():
+    if os.path.exists('../Data/CleanedPlayers.csv'):
         # Get skater data
         nhl_skaters = get_player_data.get_player_data(train_years)
         player_data = nhl_skaters
@@ -36,33 +37,46 @@ def get_nhl_data():
 
 
 def get_match_history():
-    if not os.path.exists('../Data/Matches.csv') or not os.path.exists('../Data/TestingMatches.csv'):
+    if not os.path.exists('../Data/Matches.csv'):
         # Get Training Game Data
         game_data = get_game_data.get_games(train_years)
         get_game_data.to_csv(game_data, '../Data/Matches.csv')
         print("Training Game Data Saved")
 
+    if not os.path.exists('../Data/TestingMatches.csv'):
         # Get Test Data
         game_data = get_game_data.get_games(test_years)
         get_game_data.to_csv(game_data, '../Data/TestingMatches.csv')
         print("Testing Game Data Saved")
 
+    if not os.path.exists('../Data/CurrentMatches.csv'):
+        # Get Current Data
+        game_data = get_game_data.get_games(current_years)
+        get_game_data.to_csv(game_data, '../Data/CurrentMatches.csv')
+        print("Current Game Data Saved")
 
 def get_pregame_stats():
-    if not os.path.exists('../Data/PregameStats.csv') or not os.path.exists('../Data/TestingPregameStats.csv'):
+    if not os.path.exists('../Data/PregameStats.csv'):
         # Gather Training Pregame Statistics
         pregame_data = get_pregame_data.get_pregame_statistics('../Data/Matches.csv')
         get_pregame_data.to_csv(pregame_data, '../Data/PregameStats.csv')
         print("Training Pregame Data Saved")
 
+    if not os.path.exists('../Data/TestingPregameStats.csv'):
         # Gather Testing Pregame Statistics
         testing_data = get_pregame_data.get_pregame_statistics('../Data/TestingMatches.csv')
         get_pregame_data.to_csv(testing_data, '../Data/TestingPregameStats.csv')
         print("Testing Pregame Data Saved")
 
+    if not os.path.exists('../Data/CurrentPregameStats.csv'):
+        # Gather Current Season Data
+        testing_data = get_pregame_data.get_pregame_statistics('../Data/CurrentMatches.csv')
+        get_pregame_data.to_csv(testing_data, '../Data/CurrentPregameStats.csv')
+        print("Current Pregame Data Saved")
+
 
 def gather_data() -> None:
-    # get_nhl_data()
+    get_nhl_data()
     get_match_history()
     get_pregame_stats()
 

@@ -11,7 +11,7 @@ def train_forrest_classifier(x, y):
 
 
 def train_neural_net(x, y):
-    clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 2), random_state=1)
+    clf = MLPClassifier(max_iter=1000, solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(5, 2), random_state=1)
     clf.fit(x, y)
     return clf
 

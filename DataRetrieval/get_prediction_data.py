@@ -6,20 +6,20 @@ def get_games(file_path: str) -> list:
     with open(file_path, 'r') as read_obj:
         csv_reader = list(csv.reader(read_obj))
         for row in csv_reader:
-            if row[13] == "False":
+            if row[19] == "False":
                 games.append(row)
     return games
 
 def get_independent(games: list) -> list:
     x = []
     for game in games:
-        x.append(game[2:12])
+        x.append(game[3:18])
     return x
 
 def get_dependent(games: list) -> list:
     y = []
     for game in games:
-        y.append(game[12])
+        y.append(game[18])
     replacements = {"Home": 0, "Away": 1}
     replacer = replacements.get
     y = [replacer(n, n) for n in y]
