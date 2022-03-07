@@ -14,6 +14,13 @@ x_training_headers = ['home_win_ratio_5', 'home_current_goals_avg', 'home_curren
 def get_models(x_train, y_train, x_test_season, y_test_season):
     models = math_models.Models(x_train, y_train, x_test_season, y_test_season)
 
+    # Train Models2
+    models.train_models()
+    return models
+
+def get_and_test_models(x_train, y_train, x_test_season, y_test_season):
+    models = math_models.Models(x_train, y_train, x_test_season, y_test_season)
+
     # Train Models
     models.train_models()
 
@@ -31,7 +38,7 @@ def get_models(x_train, y_train, x_test_season, y_test_season):
     print("Neural Network Log Loss: " + str(lg_log_loss))
 
     # Plot lower dimensionality
-    # plt.plot_reduced_dimensionality(models.x_test_reduced, y_test)
+    plt.plot_reduced_dimensionality(x_test_season, y_test_season)
 
     # Predict Reduced Dimensionality
     print("PCA K-Means Prediction: ")
@@ -51,10 +58,22 @@ def get_models(x_train, y_train, x_test_season, y_test_season):
 # Look into cleaning data and what is best for each predictor
 # Combine predictions (sensor fusion)
 # Train with 2021 year and 2022 partial matches, try less years
-# Best is 60% with kmeans
-def run_models(away_team: str, home_team: str):
+# Best is 59.7% with kmeans
+def test_models(away_team: str, home_team: str):
     x_train, y_train, x_test_season, y_test_season = data.split_data()
 
+    models = get_and_test_models(x_train, y_train, x_test_season, y_test_season)
+
+    # Predict Current Season Games
+    x_current_game = data.get_single_game(home_team, away_team)
+    x_current_game = [x_current_game]
+    print(away_team + "     " + home_team + " Percentage Chance")
+    print(models.neural_net.predict_proba(x_current_game))
+    print(models.neural_net.predict(x_current_game))
+    print(x_current_game)
+
+def run_models(away_team: str, home_team: str):
+    x_train, y_train, x_test_season, y_test_season = data.split_data()
     models = get_models(x_train, y_train, x_test_season, y_test_season)
 
     # Predict Current Season Games
@@ -62,9 +81,12 @@ def run_models(away_team: str, home_team: str):
     x_current_game = [x_current_game]
     print(away_team + "     " + home_team + " Percentage Chance")
     print(models.neural_net.predict_proba(x_current_game))
+    prediction = models.neural_net.predict(x_current_game)
+    print(prediction)
+
 
 def main():
     teams = team.Teams()
-    run_models(teams.Kraken, teams.Flames)
+    test_models(teams.Kraken, teams.Flames)
 
-main()
+#main()

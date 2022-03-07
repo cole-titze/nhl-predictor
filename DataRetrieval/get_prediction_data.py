@@ -66,7 +66,8 @@ def get_single_game(home_team, away_team):
         csv_reader = list(csv.reader(read_obj))
     season = '20212022'
     season_data = pg.get_single_season(csv_reader, season)
-    game_id = int(1000)
+    game_id = 893
+
     pregame_row = [
         pg.get_win_ratio(game_id, season_data, home_team),
         pg.get_current_goals_per_game(game_id, season_data, home_team),
@@ -85,3 +86,10 @@ def get_single_game(home_team, away_team):
         pg.get_head_to_head_ratio(game_id, season_data, away_team, home_team)
     ]
     return pregame_row
+
+x_training_headers = ['home_win_ratio_5', 'home_current_goals_avg',
+                      'home_current_goals_avg_h', 'home_conceded_goals_avg', 'home_conceded_goals_avg_h',
+                      'home_goal_average_5', 'home_conceded_average_5', 'h2h_w_d_l_ratio',
+                      'away_current_goals_avg', 'away_current_goals_avg', 'away_current_goals_avg_h',
+                      'away_conceded_goals_avg', 'away_conceded_goals_avg_h', 'away_goal_average_5',
+                      'away_conceded_average_5']
