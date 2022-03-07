@@ -56,4 +56,5 @@ class Models:
 
     def predict_results(self, model):
         y_prediction = model.predict(self.x_test)
+        print(y_prediction)
         self.prediction = accuracy_score(self.y_test, y_prediction)
